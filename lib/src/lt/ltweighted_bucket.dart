@@ -36,14 +36,14 @@ class LTWeightedBucket implements Bucket {
   }
 
   @override
-  void selectInto(List<OrderData> result) {
+  void selectInto(List<SamplingData> result) {
     for (WeightEvent e in select()) {
       result.add(e.getEvent());
     }
   }
 
   @override
-  void add(OrderData e) {
+  void add(SamplingData e) {
     if (_index < events.length) {
       events[_index++] = e as WeightEvent;
     }
@@ -65,9 +65,9 @@ class LTWeightedBucket implements Bucket {
         double valueSum = 0;
         num timeSum = 0;
         for (int i = 0; i < _index; i++) {
-          OrderData e = events[i]!;
-          valueSum += e.getValue();
-          timeSum += e.getOrder();
+          SamplingData e = events[i]!;
+          valueSum += e.samplingValue;
+          timeSum += e.samplingOrder;
         }
         _average = WeightEvent.of(timeSum ~/ _index, valueSum / _index);
       }
@@ -100,20 +100,20 @@ class LTWeightedBucket implements Bucket {
 
   double calcSSE(LTWeightedBucket last, LTWeightedBucket next) {
     if (sse == -1) {
-      double lastVal = last.get(last.size() - 1)!.getValue();
-      double nextVal = next.get(0)!.getValue();
+      double lastVal = last.get(last.size() - 1)!.samplingValue;
+      double nextVal = next.get(0)!.samplingValue;
       double avg = lastVal + nextVal;
       for (int i = 0; i < _index; i++) {
-        OrderData e = events[i]!;
-        avg += e.getValue();
+        SamplingData e = events[i]!;
+        avg += e.samplingValue;
       }
       avg = avg / (_index + 2);
       double lastSe = _sequarErrors(lastVal, avg);
       double nextSe = _sequarErrors(nextVal, avg);
       sse = lastSe + nextSe;
       for (int i = 0; i < _index; i++) {
-        OrderData e = events[i]!;
-        sse += _sequarErrors(e.getValue(), avg);
+        SamplingData e = events[i]!;
+        sse += _sequarErrors(e.samplingValue, avg);
       }
     }
     return sse;

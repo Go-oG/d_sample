@@ -1,20 +1,16 @@
 import 'package:d_sample/d_sample.dart';
 
-class PlainEvent implements OrderData {
+class PlainEvent implements SamplingData {
   final int _time;
   final double _value;
 
   const PlainEvent(this._time, this._value);
 
   @override
-  int getOrder() {
-    return _time;
-  }
+  int get samplingOrder => _time;
 
   @override
-  double getValue() {
-    return _value;
-  }
+  double get samplingValue => _value;
 
   @override
   int get hashCode {
