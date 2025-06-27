@@ -1,6 +1,6 @@
 name: d_sample
 description: Downsampling algorithms for time series data（LTOB, LTTB, LTD, OSI-PI Plot, etc.）Implemented in Dart
-version: 1.0.0
+version: 1.0.1
 repository: https://github.com/Go-oG/d_sample
 
 environment:
