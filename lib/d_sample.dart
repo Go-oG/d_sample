@@ -1,19 +1,19 @@
 library;
 
+import 'package:d_sample/src/mm.dart';
+
 import 'src/lt/lta_builder.dart';
-import 'src/mm/mm_algorithm.dart';
-import 'src/mm/piplot_algorithm.dart';
 import 'src/order_sort.dart';
 import 'src/weighted_event.dart';
 
-mixin OrderData {
-  int getOrder();
+abstract interface class SamplingData {
+  int get samplingOrder;
 
-  double getValue();
+  double get samplingValue;
 }
 
 interface class DownSampling {
-  List<OrderData> process(List<OrderData> data, int threshold) {
+  List<SamplingData> process(List<SamplingData> data, int threshold) {
     throw Error();
   }
 }
@@ -42,7 +42,7 @@ class DSAlgorithms implements DownSampling {
   }
 
   @override
-  List<OrderData> process(List<OrderData> data, int threshold) {
+  List<SamplingData> process(List<SamplingData> data, int threshold) {
     return _delegate.process(data, threshold);
   }
 }
@@ -55,16 +55,16 @@ class MixedAlgorithm implements DownSampling {
   }
 
   @override
-  List<OrderData> process(List<OrderData> data, int threshold) {
+  List<SamplingData> process(List<SamplingData> data, int threshold) {
     if (_map.isEmpty) {
       return data;
     }
-    Set<OrderData> set = <OrderData>{};
+    Set<SamplingData> set = <SamplingData>{};
     for (DownSampling da in _map.keys) {
-      List<OrderData> subList = da.process(data, (threshold * _map[da]!).toInt());
+      List<SamplingData> subList = da.process(data, (threshold * _map[da]!).toInt());
       set.addAll(subList);
     }
-    List<OrderData> result = [];
+    List<SamplingData> result = [];
     result.addAll(set);
     result.sort(orderAsc);
     return result;
@@ -75,24 +75,24 @@ class TimeGapAlgorithm implements DownSampling {
   final double _rate = 1;
 
   @override
-  List<OrderData> process(List<OrderData> data, int threshold) {
+  List<SamplingData> process(List<SamplingData> data, int threshold) {
     if (data.isEmpty || threshold >= data.length) {
       return data;
     }
-    List<OrderData> result = [];
+    List<SamplingData> result = [];
 
     List<WeightEvent> weighted = [];
-    double avg = (data.last.getOrder() - data.first.getOrder()) * 1.0 / (data.length - 1);
+    double avg = (data.last.samplingOrder - data.first.samplingOrder) * 1.0 / (data.length - 1);
     for (int i = 0; i < data.length; i++) {
       WeightEvent we = WeightEvent(data[i]);
       if (i < data.length - 1) {
-        num delta = data[i + 1].getOrder() - data[i].getOrder();
+        num delta = data[i + 1].samplingOrder - data[i].samplingOrder;
         we.setWeight(delta - avg);
       }
       weighted.add(we);
     }
 
-    Set<OrderData> set = <OrderData>{};
+    Set<SamplingData> set = <SamplingData>{};
     int max = (threshold * _rate).toInt();
     int multiple = 1024;
     int limit = (double.maxFinite - 2).toInt();

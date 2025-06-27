@@ -13,12 +13,12 @@ class DSTriangle {
     if (last == null || curr == null || next == null) {
       return;
     }
-    num dx1 = curr.getOrder() - last.getOrder();
-    num dx2 = last.getOrder() - next.getOrder();
-    num dx3 = next.getOrder() - curr.getOrder();
-    double y1 = next.getValue();
-    double y2 = curr.getValue();
-    double y3 = last.getValue();
+    num dx1 = curr.samplingOrder - last.samplingOrder;
+    num dx2 = last.samplingOrder - next.samplingOrder;
+    num dx3 = next.samplingOrder - curr.samplingOrder;
+    double y1 = next.samplingValue;
+    double y2 = curr.samplingValue;
+    double y3 = last.samplingValue;
     double s = 0.5 * (y1 * dx1 + y2 * dx2 + y3 * dx3).abs();
     curr.setWeight(s);
   }

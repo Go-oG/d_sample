@@ -1,4 +1,3 @@
-
 import 'package:d_sample/d_sample.dart';
 
 import '../bucket.dart';
@@ -8,7 +7,7 @@ import 'ltweighted_bucket.dart';
 class LTWeightedBucketFactory implements BucketFactory<LTWeightedBucket> {
   @override
   LTWeightedBucket newBucket() {
-    return  LTWeightedBucket();
+    return LTWeightedBucket();
   }
 
   @override
@@ -17,7 +16,7 @@ class LTWeightedBucketFactory implements BucketFactory<LTWeightedBucket> {
   }
 
   @override
-  LTWeightedBucket newBucketFromEvent(OrderData e) {
+  LTWeightedBucket newBucketFromEvent(SamplingData e) {
     return LTWeightedBucket.of(e as WeightEvent);
   }
 }

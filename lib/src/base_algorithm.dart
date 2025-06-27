@@ -1,24 +1,26 @@
 import 'dart:core';
+
+import 'package:d_sample/d_sample.dart';
 import 'package:meta/meta.dart';
+
 import 'bucket.dart';
 import 'bucket_splitter.dart';
-import 'package:d_sample/d_sample.dart';
 
-abstract class BucketBasedAlgorithm<B extends Bucket, E extends OrderData> implements DownSampling {
-
+abstract class BucketBasedAlgorithm<B extends Bucket, E extends SamplingData>
+    implements DownSampling {
   @protected
   late BucketSplitter<B, E> splitter;
   @protected
   late BucketFactory<B> factory;
 
   @protected
-  List<E> prepare(List<OrderData> data);
+  List<E> prepare(List<SamplingData> data);
 
   @protected
   void beforeSelect(List<B> buckets, int threshold);
 
   @override
-  List<OrderData> process(List<OrderData> events, int threshold) {
+  List<SamplingData> process(List<SamplingData> events, int threshold) {
     int dataSize = events.length;
     if (threshold >= dataSize || dataSize < 3) {
       return events;
@@ -30,7 +32,7 @@ abstract class BucketBasedAlgorithm<B extends Bucket, E extends OrderData> imple
 
     // calculating weight or something else
     beforeSelect(buckets, threshold);
-    List<OrderData> result = [];
+    List<SamplingData> result = [];
     // select from every bucket
     for (Bucket bucket in buckets) {
       bucket.selectInto(result);

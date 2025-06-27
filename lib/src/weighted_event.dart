@@ -1,29 +1,26 @@
 import 'package:d_sample/d_sample.dart';
+
 import 'plain_event.dart';
 
-class WeightEvent implements OrderData {
-  late OrderData _event;
+class WeightEvent implements SamplingData {
+  late final SamplingData event;
   double _weight = 0;
 
   WeightEvent.of(int time, double value) {
-    _event = PlainEvent(time, value);
+    event = PlainEvent(time, value);
   }
 
-  WeightEvent(this._event);
+  WeightEvent(this.event);
 
-  OrderData getEvent() {
-    return _event;
-  }
-
-  @override
-  int getOrder() {
-    return _event.getOrder();
+  SamplingData getEvent() {
+    return event;
   }
 
   @override
-  double getValue() {
-    return _event.getValue();
-  }
+  int get samplingOrder => event.samplingOrder;
+
+  @override
+  double get samplingValue => event.samplingValue;
 
   double getWeight() {
     return _weight;
@@ -35,7 +32,7 @@ class WeightEvent implements OrderData {
 
   @override
   int get hashCode {
-    return Object.hash(_event.getOrder(), _event.getValue());
+    return Object.hash(event.samplingOrder, event.samplingValue);
   }
 
   @override
@@ -46,10 +43,10 @@ class WeightEvent implements OrderData {
     if (other is! WeightEvent) {
       return false;
     }
-    if (_event.getOrder() != other._event.getOrder()) {
+    if (event.samplingOrder != other.event.samplingOrder) {
       return false;
     }
-    if (_event.getValue() != other._event.getValue()) {
+    if (event.samplingValue != other.event.samplingValue) {
       return false;
     }
 

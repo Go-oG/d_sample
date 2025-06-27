@@ -1,4 +1,3 @@
-
 import 'package:d_sample/d_sample.dart';
 import 'package:meta/meta.dart';
 
@@ -18,9 +17,9 @@ class LTAlgorithm extends BucketBasedAlgorithm<LTWeightedBucket, WeightEvent> {
 
   @protected
   @override
-  List<WeightEvent> prepare(List<OrderData> data) {
+  List<WeightEvent> prepare(List<SamplingData> data) {
     List<WeightEvent> result = [];
-    for (OrderData event in data) {
+    for (SamplingData event in data) {
       result.add(WeightEvent(event));
     }
     return result;

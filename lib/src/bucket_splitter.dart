@@ -1,14 +1,15 @@
 import 'package:d_sample/d_sample.dart';
+
 import 'bucket.dart';
 
-interface class  BucketSplitter<B extends Bucket, E extends OrderData> {
-  List<B> split(BucketFactory<B> factory, List<E> data, int threshold){
+interface class BucketSplitter<B extends Bucket, E extends SamplingData> {
+  List<B> split(BucketFactory<B> factory, List<E> data, int threshold) {
     throw Error();
   }
 }
 
-class FixedNumBucketSplitter<B extends Bucket, E extends OrderData> implements BucketSplitter<B, E> {
-
+class FixedNumBucketSplitter<B extends Bucket, E extends SamplingData>
+    implements BucketSplitter<B, E> {
   @override
   List<B> split(BucketFactory<B> factory, List<E> data, int threshold) {
     int bucketNum = threshold - 2;
@@ -47,19 +48,19 @@ class FixedNumBucketSplitter<B extends Bucket, E extends OrderData> implements B
   }
 }
 
-
-class FixedTimeBucketSplitter<B extends Bucket, E extends OrderData> implements BucketSplitter<B, E> {
+class FixedTimeBucketSplitter<B extends Bucket, E extends SamplingData>
+    implements BucketSplitter<B, E> {
   List<B> split2(BucketFactory<B> factory, List<E> data, int threshold) {
     List<B> buckets = [];
-    num start = data[0].getOrder();
-    num end = data[data.length - 1].getOrder();
+    num start = data[0].samplingOrder;
+    num end = data[data.length - 1].samplingOrder;
     num span = end - start;
     double pice = span / threshold;
     double time = start.toDouble();
     int index = -1;
     for (int i = 0; i < data.length; i++) {
-      OrderData e = data[i];
-      if (e.getOrder() >= time) {
+      SamplingData e = data[i];
+      if (e.samplingOrder >= time) {
         time += pice;
         index++;
         buckets.add(factory.newBucket());
@@ -75,11 +76,11 @@ class FixedTimeBucketSplitter<B extends Bucket, E extends OrderData> implements 
     for (int i = 0; i < threshold; i++) {
       buckets.add(factory.newBucket());
     }
-    num start = data[0].getOrder();
-    num end = data[data.length - 1].getOrder();
+    num start = data[0].samplingOrder;
+    num end = data[data.length - 1].samplingOrder;
     num span = end - start;
-    for (OrderData e in data) {
-      int bindex = (e.getOrder() - start) * threshold ~/ span;
+    for (SamplingData e in data) {
+      int bindex = (e.samplingOrder - start) * threshold ~/ span;
       bindex = bindex >= threshold ? threshold - 1 : bindex;
       buckets[bindex].add(e);
     }
